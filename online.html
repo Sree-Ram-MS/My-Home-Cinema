@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CastFlix Online — no phone server needed</title>
+<style>
+:root{--bg:#07070c;--panel:#14141d;--line:#2a2a3a;--muted:#a9a9bd;--red:#e50914}
+*{box-sizing:border-box} body{margin:0;background:var(--bg);color:#fff;
+font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif}
+header{position:sticky;top:0;z-index:10;padding:16px 28px;border-bottom:1px solid rgba(255,255,255,.08);
+background:rgba(7,7,12,.95);backdrop-filter:blur(14px)}
+.logo{font-size:30px;font-weight:950;letter-spacing:1.5px;
+background:linear-gradient(90deg,#ff2d3f,#ff7a18);-webkit-background-clip:text;background-clip:text;color:transparent}
+.logo small{display:block;font-size:10px;letter-spacing:4px;color:var(--muted);background:none;-webkit-text-fill-color:var(--muted)}
+main{padding:24px 28px 64px;max-width:920px;margin:0 auto}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:22px;padding:24px}
+.formGrid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.field label{display:block;color:var(--muted);font-size:13px;margin-bottom:6px;font-weight:700}
+.field input,.field select{width:100%;padding:12px 14px;border-radius:12px;border:1px solid var(--line);background:#0e0e16;color:#fff;font-size:16px}
+.field.full{grid-column:1/-1}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #fff;outline-offset:3px}
+.btnPlay,.btnInfo{border:0;border-radius:12px;padding:14px 26px;font-size:17px;font-weight:850;cursor:pointer;margin-top:16px}
+.btnPlay{background:#fff;color:#000} .btnInfo{background:rgba(255,255,255,.16);color:#fff;border:1px solid rgba(255,255,255,.28)}
+.presetRow{display:flex;gap:8px;flex-wrap:wrap}
+.presetBtn{width:38px;height:38px;border-radius:50%;border:3px solid transparent;cursor:pointer}
+.presetBtn.on{border-color:#fff}
+.chipRow{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.chipRow button{background:rgba(255,255,255,.09);color:#fff;border:1px solid var(--line);padding:10px 16px;border-radius:999px;cursor:pointer;font-size:15px}
+.checkRow{display:flex;gap:18px;flex-wrap:wrap;margin-top:14px;color:#ddd}
+.checkRow label{display:flex;gap:8px;align-items:center}
+.note{color:var(--muted);font-size:14px;line-height:1.6}
+.searchGrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:12px;margin-top:12px}
+.searchCard{background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden;color:#fff;text-align:left;padding:0;cursor:pointer;font:inherit}
+.searchCard img{width:100%;aspect-ratio:2/3;object-fit:cover;display:block}
+.searchCard .searchNoPoster{aspect-ratio:2/3;display:flex;align-items:center;padding:14px;background:linear-gradient(135deg,#e50914,#3b0a5e);font-weight:800}
+.searchCard span{display:block;padding:10px 12px} .searchCard small{display:block;color:var(--muted);margin-top:4px}
+#onlineUrl{word-break:break-all;background:#0e0e16;border:1px solid var(--line);border-radius:12px;padding:12px 14px;margin-top:14px;color:#c9c9dd;font-size:14px}
+#onlinePlayer{position:fixed;inset:0;background:#000;z-index:25;display:none;flex-direction:column}
+#onlinePlayer.show{display:flex}
+#onlinePlayer iframe{width:100%;flex:1;border:0;background:#000}
+.playerTop{padding:14px 20px;display:flex;justify-content:space-between;align-items:center;background:#14141d;gap:12px}
+button.close{background:var(--red);color:#fff;border:0;padding:10px 18px;border-radius:10px;cursor:pointer;font-size:15px;font-weight:700}
+@media (max-width:640px){.formGrid{grid-template-columns:1fr} main{padding:16px}}
+</style></head><body>
+<header><div class="logo">CASTFLIX<small>ONLINE — NO PHONE NEEDED</small></div></header>
+<main><div class="card">
+<h2 style="margin-top:0">Online — CineLite embed</h2>
+<p class="note">This page needs <b style="color:#fff">internet only</b> — no phone, no terminal, no local files. The TV loads the CineLite player directly from the internet, by TMDB / AniList ID. It will keep working after you close the phone terminal, as long as this page itself stays open or is hosted somewhere the TV can open.</p>
+<h3>Search by name</h3>
+<p class="note">Search needs a free TMDB API key, saved only on this TV browser. Get it free: create an account on themoviedb.org, go to Settings &gt; API, copy the API Key (v3), paste it here and tap Save.</p>
+<div class="formGrid">
+<div class="field"><label>TMDB API key (saved on this browser only)</label><input id="tmdbKey" type="password" placeholder="Paste your TMDB API key here"></div>
+<div class="field"><label>&nbsp;</label><button type="button" class="btnInfo" id="tmdbSaveBtn" style="width:100%;margin-top:0">Save API Key</button></div>
+<div class="field full"><label>Movie or show name</label><input id="onSearchName" placeholder="e.g. Interstellar"></div>
+</div>
+<button type="button" class="btnPlay" id="onSearchBtn">🔍 Search by Name</button>
+<p class="note" id="tmdbKeyStatus"></p>
+<p class="note" id="onSearchErr" style="color:#ff8a94"></p>
+<div class="searchGrid" id="onSearchResults"></div>
+<h3>Or play by ID</h3>
+<div class="formGrid">
+<div class="field"><label>Media type</label><select id="onType"><option value="movie">Movie — TMDB ID</option><option value="tv">TV Show — TMDB ID</option><option value="anime">Anime — AniList ID</option></select></div>
+<div class="field"><label id="onIdLabel">TMDB ID</label><input id="onId" inputmode="numeric" placeholder="e.g. 157336"></div>
+<div class="field" id="onSeasonField" style="display:none"><label>Season</label><input id="onSeason" inputmode="numeric" value="1"></div>
+<div class="field" id="onEpisodeField" style="display:none"><label>Episode</label><input id="onEpisode" inputmode="numeric" value="1"></div>
+<div class="field"><label>Preferred quality</label><select id="onQuality"><option value="">Auto / 1080p</option><option value="4k">4K UHD</option><option value="1080p">1080p</option><option value="720p">720p</option><option value="480p">480p</option></select></div>
+<div class="field"><label>Start / resume time</label><input id="onStart" placeholder="Leave blank to resume, or 120 / 02:30"></div>
+</div>
+<div class="field" style="margin-top:14px"><label>Accent colour</label><div class="presetRow" id="presetRow">
+<button type="button" class="presetBtn on" data-color="e50914" style="background:#e50914"></button>
+<button type="button" class="presetBtn" data-color="00e5ff" style="background:#00e5ff"></button>
+<button type="button" class="presetBtn" data-color="10b981" style="background:#10b981"></button>
+<button type="button" class="presetBtn" data-color="a855f7" style="background:#a855f7"></button>
+<button type="button" class="presetBtn" data-color="f59e0b" style="background:#f59e0b"></button>
+<button type="button" class="presetBtn" data-color="3b82f6" style="background:#3b82f6"></button>
+<button type="button" class="presetBtn" data-color="fb7185" style="background:#fb7185"></button>
+<button type="button" class="presetBtn" data-color="f97316" style="background:#f97316"></button>
+</div><input id="onColor" value="e50914" style="margin-top:10px;max-width:220px;padding:11px 14px;border-radius:12px;border:1px solid var(--line);background:#0e0e16;color:#fff"></div>
+<div class="checkRow"><label><input type="checkbox" id="onSuggest"> Pause recommendations</label><label><input type="checkbox" id="onReset"> Start from 0:00</label></div>
+<button type="button" class="btnPlay" id="onlinePlayBtn">▶ Play Online</button>
+<button type="button" class="btnInfo" id="onlineCopyBtn">Copy Link</button>
+<div id="onlineUrl"></div>
+<p class="note" id="onlineErr" style="color:#ff8a94"></p>
+<h3>Try these</h3>
+<div class="chipRow">
+<button type="button" class="featBtn" data-type="movie" data-id="157336" data-title="Interstellar">Interstellar</button>
+<button type="button" class="featBtn" data-type="movie" data-id="550" data-title="Fight Club">Fight Club</button>
+<button type="button" class="featBtn" data-type="tv" data-id="1399" data-season="1" data-episode="1" data-title="Game of Thrones S1E1">Game of Thrones S1E1</button>
+<button type="button" class="featBtn" data-type="tv" data-id="94605" data-season="1" data-episode="1" data-title="Arcane S1E1">Arcane S1E1</button>
+</div>
+<h3>Recent online</h3>
+<div class="chipRow" id="onlineRecent"><span class="note">Nothing played online yet on this browser.</span></div>
+<p class="note">Hosting this page: upload this file as <b style="color:#fff">index.html</b> to a free static host — for example a new GitHub repo with Pages enabled, Netlify Drop, or Cloudflare Pages — then open that hosted URL on the TV any time. No phone or terminal is needed after that. Local CastFlix files will not work from the hosted page, only this Online tab.</p>
+</div></main>
+<div id="onlinePlayer"><div class="playerTop"><b id="onlineTitle">Online player</b><button type="button" class="close" id="onlineExitBtn">✕ Exit</button></div>
+<iframe id="onlineFrame" allow="autoplay; fullscreen; encrypted-media; picture-in-picture; presentation" allowfullscreen></iframe></div>
+<script>
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function onlineTypeChanged(){const t=$('onType').value;$('onIdLabel').textContent=t==='anime'?'AniList ID':'TMDB ID';$('onSeasonField').style.display=t==='tv'?'block':'none';$('onEpisodeField').style.display=t==='tv'||t==='anime'?'block':'none';}
+function parseStartTime(s){s=(s||'').trim();if(!s)return 0;if(/^\d+$/.test(s))return parseInt(s,10);const hm=s.match(/^(?:(\d+)h)?(?:(\d+)m)?(?:(\d+)s)?$/);if(hm&&(hm[1]||hm[2]||hm[3]))return (parseInt(hm[1]||0)*3600)+(parseInt(hm[2]||0)*60)+parseInt(hm[3]||0);const p=s.split(':').map(Number);if(p.some(isNaN))return 0;if(p.length===2)return p[0]*60+p[1];if(p.length===3)return p[0]*3600+p[1]*60+p[2];return 0;}
+function onlineKey(t,id,s,e){return 'castflix_online_'+[t,id,s||'',e||''].join('_');}
+function buildOnlineUrl(){
+ const type=$('onType').value,id=$('onId').value.trim();$('onlineErr').textContent='';
+ if(!id||!/^\d+$/.test(id)){$('onlineErr').textContent='Enter a numeric ID first.';return null;}
+ let path=type==='movie'?'/'+id:type==='tv'?'/'+id+'/'+($('onSeason').value||'1')+'/'+($('onEpisode').value||'1'):'/anime/'+id+'/'+($('onEpisode').value||'1');
+ const q=new URLSearchParams();const color=($('onColor').value||'').replace('#','').trim();if(color)q.set('color',color);const qual=$('onQuality').value;if(qual)q.set('quality',qual);if($('onSuggest').checked)q.set('suggestionui','true');const reset=$('onReset').checked;let start=parseStartTime($('onStart').value);
+ if(!reset&&!start){const saved=localStorage.getItem(onlineKey(type,id,$('onSeason').value,$('onEpisode').value));if(saved){try{const o=JSON.parse(saved);if(o.currentTime>30)start=Math.floor(o.currentTime);}catch(e){}}}
+ if(reset)q.set('reset','1');else if(start>0)q.set('t',String(start));const qs=q.toString();
+ return {url:'https://embed.cinelite.xyz'+path+(qs?'?'+qs:''),title:type==='movie'?'Online movie '+id:type==='tv'?'Online '+id+' S'+($('onSeason').value||'1')+'E'+($('onEpisode').value||'1'):'Online anime '+id+' Ep '+($('onEpisode').value||'1')};
+}
+function renderOnlineRecent(){try{const list=JSON.parse(localStorage.getItem('castflix_online_recent')||'[]');$('onlineRecent').innerHTML=list.length?list.map(r=>`<button type="button" data-online-url="${esc(r.url)}">${esc(r.title)}</button>`).join(''):'<span class="note">Nothing played online yet on this browser.</span>';}catch(e){}}
+function saveOnlineRecent(t,u){try{let list=JSON.parse(localStorage.getItem('castflix_online_recent')||'[]');list=[{title:t,url:u},...list.filter(r=>r.url!==u)].slice(0,8);localStorage.setItem('castflix_online_recent',JSON.stringify(list));}catch(e){}renderOnlineRecent();}
+function openOnlineUrl(u,t){$('onlineTitle').textContent=t||'Online player';$('onlineFrame').src=u;$('onlinePlayer').classList.add('show');if(t)saveOnlineRecent(t,u);$('onlineExitBtn').focus();}
+function openOnline(){const b=buildOnlineUrl();if(!b)return;$('onlineUrl').textContent=b.url;openOnlineUrl(b.url,b.title);}
+function closeOnline(){$('onlineFrame').src='';$('onlinePlayer').classList.remove('show');}
+function tmdbKeyGet(){return localStorage.getItem('castflix_tmdb_key')||'';}
+function tmdbKeySave(){const k=$('tmdbKey').value.trim();if(k)localStorage.setItem('castflix_tmdb_key',k);else localStorage.removeItem('castflix_tmdb_key');$('tmdbKeyStatus').textContent=k?'API key saved on this TV browser.':'API key cleared.';}
+async function searchByName(){
+ const q=$('onSearchName').value.trim(),key=tmdbKeyGet();
+ if(!key){$('onSearchErr').textContent='Add your free TMDB API key first.';$('tmdbKey').focus();return;}
+ if(!q){$('onSearchErr').textContent='Type a movie or show name first.';return;}
+ $('onSearchErr').textContent='Searching...';$('onSearchResults').innerHTML='';
+ try{const r=await fetch('https://api.themoviedb.org/3/search/multi?api_key='+encodeURIComponent(key)+'&query='+encodeURIComponent(q)+'&include_adult=false&page=1');if(!r.ok)throw new Error('TMDB returned '+r.status+' — check your API key.');const d=await r.json();const items=(d.results||[]).filter(x=>x.media_type==='movie'||x.media_type==='tv').slice(0,12);if(!items.length){$('onSearchErr').textContent='No results for that name.';return;}$('onSearchErr').textContent='';$('onSearchResults').innerHTML=items.map(x=>{const title=x.title||x.name||'Unknown',year=(x.release_date||x.first_air_date||'').slice(0,4),poster=x.poster_path?('https://image.tmdb.org/t/p/w200'+x.poster_path):'';return `<button type="button" class="searchCard" data-search-type="${x.media_type}" data-search-id="${x.id}">${poster?`<img src="${poster}" alt="" loading="lazy">`:`<div class="searchNoPoster">${esc(title)}</div>`}<span><b>${esc(title)}</b><small>${year} · ${x.media_type==='tv'?'TV':'Movie'} · ★ ${(x.vote_average||0).toFixed(1)}</small></span></button>`;}).join('');}catch(e){$('onSearchErr').textContent='Search failed: '+e.message;}
+}
+$('onType').addEventListener('change',onlineTypeChanged);
+document.querySelectorAll('.presetBtn').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('.presetBtn').forEach(x=>x.classList.remove('on'));b.classList.add('on');$('onColor').value=b.dataset.color;}));
+document.querySelectorAll('.featBtn').forEach(b=>b.addEventListener('click',()=>{$('onType').value=b.dataset.type;onlineTypeChanged();$('onId').value=b.dataset.id;if(b.dataset.season)$('onSeason').value=b.dataset.season;if(b.dataset.episode)$('onEpisode').value=b.dataset.episode;$('onStart').value='';$('onReset').checked=false;const built=buildOnlineUrl();if(built)openOnlineUrl(built.url,b.dataset.title);}));
+$('onlinePlayBtn').addEventListener('click',openOnline);
+$('onlineCopyBtn').addEventListener('click',()=>{const b=buildOnlineUrl();if(!b)return;$('onlineUrl').textContent=b.url;if(navigator.clipboard)navigator.clipboard.writeText(b.url).catch(()=>{});});
+$('onlineExitBtn').addEventListener('click',closeOnline);
+$('tmdbSaveBtn').addEventListener('click',tmdbKeySave);
+$('onSearchBtn').addEventListener('click',searchByName);
+$('onSearchName').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();searchByName();}});
+document.addEventListener('click',e=>{const sc=e.target.closest('.searchCard');if(sc){$('onType').value=sc.dataset.searchType==='tv'?'tv':'movie';onlineTypeChanged();$('onId').value=sc.dataset.searchId;if(sc.dataset.searchType==='tv'){$('onSeason').value='1';$('onEpisode').value='1';}$('onStart').value='';$('onReset').checked=false;openOnline();}const r=e.target.closest('#onlineRecent button');if(r&&r.dataset.onlineUrl)openOnlineUrl(r.dataset.onlineUrl,r.textContent);});
+document.addEventListener('keydown',e=>{if($('onlinePlayer').classList.contains('show')&&(e.key==='Escape'||e.key==='Backspace')){e.preventDefault();closeOnline();}});
+window.addEventListener('message',e=>{if(!e.origin||!e.origin.includes('embed.cinelite.xyz'))return;const d=e.data||{};if(d.type==='CINELITE_EXIT_PLAYER'){closeOnline();return;}if(d.type&&d.type.includes('PROGRESS')){try{const key=onlineKey(d.isAnime?'anime':(d.isTv?'tv':'movie'),d.mediaId||'',d.season||'',d.episode||'');localStorage.setItem(key,JSON.stringify({currentTime:d.currentTime||0,duration:d.duration||0,progress:d.progress||0}));}catch(err){}}});
+$('tmdbKey').value=tmdbKeyGet();onlineTypeChanged();renderOnlineRecent();
+</script></body></html>

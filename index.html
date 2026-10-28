@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CastFlix — Your movies, your Wi-Fi, your TV</title>
+<style>
+:root{--bg:#07070c;--panel:#14141d;--line:#2a2a3a;--muted:#a9a9bd;--red:#e50914}
+*{box-sizing:border-box} body{margin:0;background:var(--bg);color:#fff;font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;line-height:1.6}
+header{padding:18px 28px;border-bottom:1px solid rgba(255,255,255,.08);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px}
+.logo{font-size:30px;font-weight:950;letter-spacing:1.5px;background:linear-gradient(90deg,#ff2d3f,#ff7a18);-webkit-background-clip:text;background-clip:text;color:transparent}
+.logo small{display:block;font-size:10px;letter-spacing:4px;color:var(--muted);background:none;-webkit-text-fill-color:var(--muted)}
+a.btn{background:#fff;color:#000;padding:11px 20px;border-radius:12px;text-decoration:none;font-weight:800}
+a.btn2{background:rgba(255,255,255,.12);color:#fff;padding:11px 20px;border-radius:12px;text-decoration:none;font-weight:700;border:1px solid rgba(255,255,255,.25)}
+main{max-width:1020px;margin:0 auto;padding:32px 28px 64px}
+.hero{padding:36px 0 8px} .hero h1{font-size:clamp(38px,6vw,64px);line-height:1.05;letter-spacing:-1px;margin:12px 0}
+.hero p{color:#d6d6e2;font-size:19px;max-width:720px}
+.eyebrow{color:#ff8a94;font-weight:800;letter-spacing:3px;font-size:13px;text-transform:uppercase}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin:24px 0}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:22px}
+.card h3{margin-top:0} .card p{color:var(--muted)}
+.step{font-size:36px;font-weight:950;color:#ff7a18}
+pre{background:#0e0e16;border:1px solid var(--line);border-radius:14px;padding:16px;overflow:auto;color:#e8e8f2}
+code{color:#ffd166}
+table{width:100%;border-collapse:collapse} th,td{text-align:left;padding:11px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{color:#fff} td{color:var(--muted)} td:first-child{color:#fff;font-weight:700}
+.note{color:var(--muted)} footer{border-top:1px solid var(--line);padding:24px 28px;color:var(--muted);text-align:center}
+@media (max-width:640px){main{padding:20px 16px 48px}}
+</style></head><body>
+<header><div class="logo">CASTFLIX<small>HOME CINEMA</small></div>
+<div><a class="btn" href="online.html">Try Online Tab</a> <a class="btn2" href="https://github.com/Sree-Ram-MS/My-Home-Cinema">GitHub Repo</a></div></header>
+<main>
+<section class="hero">
+<div class="eyebrow">No pendrive. No casting quality loss.</div>
+<h1>Your movies.<br>Your Wi-Fi.<br>Your TV.</h1>
+<p>CastFlix is a small, single-file Python server that turns your phone into a Netflix-style media server for your home. Download a movie on your phone, open one address on your TV browser, and watch the original file — no copying to a pendrive, and no casting compression.</p>
+<p><a class="btn" href="#quick-start">Quick Start ↓</a> <a class="btn2" href="server.py">Download server.py</a></p>
+</section>
+
+<h2>What is this?</h2>
+<p>CastFlix started as a fix for a very specific setup: a Jio set-top box where third-party apps and sideloading do not work, but the TV browser does. So instead of installing an app on the TV, CastFlix serves a web page from your phone over your home Wi-Fi, and the TV browser plays it.</p>
+<p>It is <b>not</b> a cloud service. Your local files are never uploaded anywhere. The phone only serves the page and the video to devices on the same Wi-Fi.</p>
+
+<h2>How it works</h2>
+<div class="grid">
+<div class="card"><div class="step">1</div><h3>Put movies on your phone</h3><p>Keep them in a folder, for example <code>Movies/Avatar (2009)/Avatar (2009).mp4</code> and <code>Series/Demo Show/Season 1/Demo Show S01E01.mp4</code>. Add a <code>poster.jpg</code> next to a movie for a real poster.</p></div>
+<div class="card"><div class="step">2</div><h3>Run one file on the same Wi-Fi</h3><p>On Android with Termux, or on a PC, run <code>python3 server.py --media ./media --port 8000</code>. The server prints a TV address like <code>http://192.168.1.10:8000</code>.</p></div>
+<div class="card"><div class="step">3</div><h3>Open it on the TV browser</h3><p>Open that address on your TV. You get a Netflix-style grid, a hero banner, Continue Watching, series episode lists, subtitles, and seeking — all playing the original file directly, not a re-encoded cast.</p></div>
+</div>
+
+<h2>Local vs Online — two different tabs</h2>
+<table>
+<tr><th></th><th>Local (Movies / Series)</th><th>Online (CineLite tab)</th></tr>
+<tr><td>Source</td><td>Files on your phone</td><td>CineLite player, by TMDB / AniList ID, over the internet</td></tr>
+<tr><td>Needs phone?</td><td>Yes, phone on, on Wi-Fi, charging</td><td>No, for playback — but the CastFlix page itself needs the phone unless you use the hosted Online page</td></tr>
+<tr><td>Quality</td><td>Original file quality</td><td>Depends on the external player and your internet</td></tr>
+<tr><td>Search</td><td>Search your own library</td><td>Search by name with a free TMDB API key, saved only on the TV browser</td></tr>
+</table>
+<p class="note">The Online tab does not play your phone files. It is a separate way to watch titles you have not downloaded, using the CineLite embed player.</p>
+
+<h2>Features</h2>
+<div class="grid">
+<div class="card"><h3>🎬 Netflix-style UI</h3><p>Hero banner, horizontal rows, glass header, 2:3 poster cards, hover play button, and gradient fallbacks when there is no poster.</p></div>
+<div class="card"><h3>📺 TV remote mode</h3><p>Add <code>?tv=1</code> once, or tap TV mode. Arrows move, OK opens, Back closes, Left/Right skip 10 seconds, and the next episode plays automatically.</p></div>
+<div class="card"><h3>▶ Continue Watching</h3><p>Progress is saved on the TV browser, with a Continue Watching row and resume on reopen. Local subtitles (.srt → WebVTT, .vtt) are supported.</p></div>
+<div class="card"><h3>🌐 Online tab</h3><p>Movie / TV / Anime by ID, accent colours, quality preference, start/resume time, pause recommendations, recent titles, and search by name with a TMDB key.</p></div>
+<div class="card"><h3>⚠ Offline redirect</h3><p>Tick the option in the Online tab and, if the phone server goes offline while the page is open, CastFlix counts down 10 seconds and opens <code>cinelite.xyz</code>. If you open the IP after the server is already down, bookmark that site directly instead — no page can redirect then.</p></div>
+<div class="card"><h3>🔒 Simple and local</h3><p>Pure Python standard library — no pip packages. Optional PIN for the local library. MP4 + H.264 + AAC plays in almost every TV browser; MKV / HEVC / DTS files are flagged because some browsers refuse them.</p></div>
+</div>
+
+<h2 id="quick-start">Quick Start</h2>
+<h3>On a PC (test first, 2 minutes)</h3>
+<pre><code>python3 server.py --media ./media --port 8000
+# Open http://127.0.0.1:8000 on the PC,
+# then the LAN address printed by the server on the TV browser.</code></pre>
+<h3>On an Android phone with Termux</h3>
+<pre><code># Install Termux from F-Droid, then in Termux:
+pkg install python -y
+termux-setup-storage
+cd ~/storage/downloads/CastFlix
+python3 server.py --media ~/storage/downloads/Movies --port 8000
+# Open the printed http://192.168.x.x:8000 address on the TV.
+# Keep the phone awake, on Wi-Fi, and charging while you watch.</code></pre>
+<h3>Standalone Online page (no phone needed)</h3>
+<p>Upload <code>online.html</code> as <code>index.html</code> to a free static host — for example a GitHub repo with Pages enabled, Netlify Drop, or Cloudflare Pages — then open that hosted URL on the TV any time. It has only the Online tab; local files will not work from the hosted page.</p>
+
+<h2>Files in this repo</h2>
+<ul>
+<li><b>server.py</b> — the whole CastFlix server and UI in one Python file. No pip packages needed.</li>
+<li><b>online.html</b> — the standalone Online-only page, for hosting with no phone server.</li>
+<li><b>index.html</b> — this page.</li>
+<li><b>README.md</b> — full setup, folder layout, and version history.</li>
+</ul>
+<p class="note">Tip: if a file will not play on the TV, try it as MP4 first. MKV files often only need remuxing, not re-encoding: <code>ffmpeg -i input.mkv -c copy output.mp4</code></p>
+</main>
+<footer>CastFlix — a home media server for your own files, plus an optional online tab. Local files stay local.</footer>
+</body></html>
