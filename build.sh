@@ -1,12 +1,12 @@
 #!/bin/bash
-# CastFlix Android — build the debug APK with Java + shell.
+# My Home Cinema Android — build the debug APK with Java + shell.
 # Usage:  ./build.sh
 # Needs:  JDK 17, Android SDK (platforms;android-34, build-tools;34.0.0),
 #         and Gradle (installed, or downloaded automatically below).
 set -e
 cd "$(dirname "$0")"
 
-echo "== CastFlix Android build =="
+echo "== My Home Cinema Android build =="
 
 # 1. Java 17
 if ! command -v java >/dev/null 2>&1; then
@@ -53,11 +53,11 @@ echo "Gradle: $GRADLE_CMD"
 
 APK="app/build/outputs/apk/debug/app-debug.apk"
 if [ -f "$APK" ]; then
-  cp "$APK" ./CastFlix-debug.apk
+  cp "$APK" ./My-Home-Cinema-debug.apk
   echo ""
-  echo "OK: APK built -> ./CastFlix-debug.apk"
-  ls -lh ./CastFlix-debug.apk
-  echo "Install it on your phone (allow install from this source), open CastFlix,"
+  echo "OK: APK built -> ./My-Home-Cinema-debug.apk"
+  ls -lh ./My-Home-Cinema-debug.apk
+  echo "Install it on your phone (allow install from this source), open My Home Cinema,"
   echo "type your movies folder, tap Start Sharing, and open the shown"
   echo "http://192.168.x.x:8000 address on your TV browser."
 else

@@ -1,4 +1,4 @@
-# CastFlix Android — Java app
+# My Home Cinema Android — Java app
 
 This branch adds a native Android app, in Java, that does the same job
 as the Python server, but without Termux or a PC:
@@ -19,10 +19,10 @@ test the page on the phone itself.
 
 Pure Java, no external libraries, no Kotlin:
 
-- `app/src/main/java/com/castflix/app/MainActivity.java` — UI: folder, port, Start/Stop, IP:port, Copy, Open
-- `app/src/main/java/com/castflix/app/SharingService.java` — foreground service that owns the server
-- `app/src/main/java/com/castflix/app/CastFlixServer.java` — HTTP server: `/`, `/api/status`, `/api/library`, `/stream` (Range/seeking), `/poster`, `/subtitles` (.srt → WebVTT)
-- `app/src/main/assets/index.html` — the same CastFlix web UI as `server.py` (v0.7), served to the TV browser
+- `app/src/main/java/com/myhomecinema/app/MainActivity.java` — UI: folder, port, Start/Stop, IP:port, Copy, Open
+- `app/src/main/java/com/myhomecinema/app/SharingService.java` — foreground service that owns the server
+- `app/src/main/java/com/myhomecinema/app/HomeCinemaServer.java` — HTTP server: `/`, `/api/status`, `/api/library`, `/stream` (Range/seeking), `/poster`, `/subtitles` (.srt → WebVTT)
+- `app/src/main/assets/index.html` — the same My Home Cinema web UI as `server.py` (v0.7), served to the TV browser
 - `app/src/main/AndroidManifest.xml`, `app/src/main/res/layout/activity_main.xml`
 
 Folder layout that works best (same as the Python server):
@@ -49,12 +49,12 @@ On a PC or Mac with JDK 17 and the Android SDK:
 chmod +x build.sh
 export ANDROID_HOME=$HOME/Android/Sdk   # adjust if your SDK is elsewhere
 ./build.sh
-# -> ./CastFlix-debug.apk
+# -> ./My-Home-Cinema-debug.apk
 ```
 
 `build.sh` checks Java and the SDK, downloads Gradle 8.5 once if
 Gradle is not installed, runs `gradle assembleDebug`, and copies the
-APK to the repo root as `CastFlix-debug.apk`.
+APK to the repo root as `My-Home-Cinema-debug.apk`.
 
 SDK parts needed: `platforms;android-34` and `build-tools;34.0.0`.
 Install them with Android Studio, or with:
@@ -70,7 +70,7 @@ Install the debug APK on your phone and allow install from that source.
 
 The workflow in `.github/workflows/android.yml` (see note below)
 builds the debug APK on every push to this `android` branch and
-uploads it as an artifact named `CastFlix-debug-apk`. Download it
+uploads it as an artifact named `My Home Cinema-debug-apk`. Download it
 from the Actions run, install it on your phone, and use it as above.
 
 > Note: the Muse GitHub App cannot create `.github/workflows/` files
@@ -82,7 +82,7 @@ from the Actions run, install it on your phone, and use it as above.
 
 ## Install and use
 
-1. Install `CastFlix-debug.apk` on your Android phone.
+1. Install `My-Home-Cinema-debug.apk` on your Android phone.
 2. Allow the video and notification permissions when asked.
 3. Keep the default folder, or type your own, and tap Start Sharing.
 4. Note the address, for example `http://192.168.1.10:8000`.

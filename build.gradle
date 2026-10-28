@@ -1,4 +1,4 @@
-// Top-level build file for CastFlix Android (Java, no dependencies).
+// Top-level build file for My Home Cinema Android (Java, no dependencies).
 plugins {
     id 'com.android.application' version '8.2.2' apply false
 }

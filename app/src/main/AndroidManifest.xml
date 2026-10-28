@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.castflix.app">
+    package="com.myhomecinema.app">
 
     <!-- Network + sharing -->
     <uses-permission android:name="android.permission.INTERNET" />

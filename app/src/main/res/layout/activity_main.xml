@@ -12,7 +12,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="CASTFLIX"
+            android:text="MY HOME CINEMA"
             android:textSize="34sp"
             android:textStyle="bold"
             android:textColor="#E50914" />
@@ -114,7 +114,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Keep this app open and the phone on Wi-Fi and charging while you watch. The TV loads the same Netflix-style page as the Python CastFlix server — Local movies/series from the folder above, plus the Online tab. Local files never leave your Wi-Fi."
+            android:text="Keep this app open and the phone on Wi-Fi and charging while you watch. The TV loads the same Netflix-style page as the Python My Home Cinema server — Local movies/series from the folder above, plus the Online tab. Local files never leave your Wi-Fi."
             android:textSize="13sp"
             android:layout_marginTop="24dp" />
     </LinearLayout>
