@@ -1,4 +1,4 @@
-# CastFlix prototype — phone media server
+# My Home Cinema prototype — phone media server
 
 One Python file, no extra packages. The phone serves a Netflix-like page
 over home Wi-Fi. The TV browser opens it by IP and plays the original
@@ -9,7 +9,7 @@ file — no casting, no re-encoding, no pendrive.
 Yes, with one hard limit (see below). Added to the Online tab:
 
 - Tick **Auto-redirect to CineLite when this server goes offline**.
-  CastFlix then checks `/api/status` every 10 seconds while the
+  My Home Cinema then checks `/api/status` every 10 seconds while the
   page is open. After 2 failed checks, it shows a Server offline
   screen and, if the tick is on, counts down 10 seconds and then
   opens https://cinelite.xyz/ automatically. Tap Stay Here to
@@ -21,7 +21,7 @@ Yes, with one hard limit (see below). Added to the Online tab:
   going offline on the phone does not kick you out of an online
   stream that does not need the phone.
 
-**Hard limit:** this only works if the CastFlix page was already
+**Hard limit:** this only works if the My Home Cinema page was already
 open when the server went down. If you type the IP:port address
 after the server is already down, the browser cannot load any
 page at all, so no code can redirect it. For that case, bookmark
@@ -53,7 +53,7 @@ tab, tap Save, type a movie/show name, tap Search, then tap a
 result to play it. Anime still needs an AniList ID, as before.
 
 **Works even if the phone terminal is closed:**
-No — not for the main CastFlix page. That page is served by the
+No — not for the main My Home Cinema page. That page is served by the
 phone, so closing the terminal stops new loads and stops local
 files. But the Online player itself loads directly from the
 internet, so a player already open on the TV can keep playing
@@ -77,7 +77,7 @@ separate tab:
   pause recommendations, and start-from-0.
 - Play opens the CineLite iframe player full-screen, with an Exit
   button. The player can also send its Continue Watching progress
-  back to CastFlix, which saves it on the TV browser and resumes
+  back to My Home Cinema, which saves it on the TV browser and resumes
   the same title next time (unless you tick start-from-0).
 - Try-it buttons: Interstellar, Fight Club, Game of Thrones S1E1,
   Arcane S1E1. Recent online titles are kept on the TV browser.
@@ -176,7 +176,7 @@ TV browser. If the TV browser plays and seeks, your STB browser works.
 
 ```bash
 pkg install python -y
-cd ~/storage/downloads/CastFlix
+cd ~/storage/downloads/My-Home-Cinema
 python3 server.py --media ~/storage/downloads/Movies --port 8000
 ```
 

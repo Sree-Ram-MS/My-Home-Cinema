@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>CastFlix Online — no phone server needed</title>
+<title>My Home Cinema Online — no phone server needed</title>
 <style>
 :root{--bg:#07070c;--panel:#14141d;--line:#2a2a3a;--muted:#a9a9bd;--red:#e50914}
 *{box-sizing:border-box} body{margin:0;background:var(--bg);color:#fff;
@@ -41,7 +41,7 @@ button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid 
 button.close{background:var(--red);color:#fff;border:0;padding:10px 18px;border-radius:10px;cursor:pointer;font-size:15px;font-weight:700}
 @media (max-width:640px){.formGrid{grid-template-columns:1fr} main{padding:16px}}
 </style></head><body>
-<header><div class="logo">CASTFLIX<small>ONLINE — NO PHONE NEEDED</small></div></header>
+<header><div class="logo">MY HOME CINEMA<small>ONLINE — NO PHONE NEEDED</small></div></header>
 <main><div class="card">
 <h2 style="margin-top:0">Online — CineLite embed</h2>
 <p class="note">This page needs <b style="color:#fff">internet only</b> — no phone, no terminal, no local files. The TV loads the CineLite player directly from the internet, by TMDB / AniList ID. It will keep working after you close the phone terminal, as long as this page itself stays open or is hosted somewhere the TV can open.</p>
@@ -89,7 +89,7 @@ button.close{background:var(--red);color:#fff;border:0;padding:10px 18px;border-
 </div>
 <h3>Recent online</h3>
 <div class="chipRow" id="onlineRecent"><span class="note">Nothing played online yet on this browser.</span></div>
-<p class="note">Hosting this page: upload this file as <b style="color:#fff">index.html</b> to a free static host — for example a new GitHub repo with Pages enabled, Netlify Drop, or Cloudflare Pages — then open that hosted URL on the TV any time. No phone or terminal is needed after that. Local CastFlix files will not work from the hosted page, only this Online tab.</p>
+<p class="note">Hosting this page: upload this file as <b style="color:#fff">index.html</b> to a free static host — for example a new GitHub repo with Pages enabled, Netlify Drop, or Cloudflare Pages — then open that hosted URL on the TV any time. No phone or terminal is needed after that. Local My Home Cinema files will not work from the hosted page, only this Online tab.</p>
 </div></main>
 <div id="onlinePlayer"><div class="playerTop"><b id="onlineTitle">Online player</b><button type="button" class="close" id="onlineExitBtn">✕ Exit</button></div>
 <iframe id="onlineFrame" allow="autoplay; fullscreen; encrypted-media; picture-in-picture; presentation" allowfullscreen></iframe></div>

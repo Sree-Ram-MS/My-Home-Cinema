@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-CastFlix prototype - phone media server with a Netflix-like TV browser UI.
+My Home Cinema prototype - phone media server with a Netflix-like TV browser UI.
 
 Pure Python standard library only. No pip packages needed.
 
@@ -205,7 +205,7 @@ HTML = r"""
 <!DOCTYPE html>
 <html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>CastFlix</title>
+<title>My Home Cinema</title>
 <style>
 :root{--bg:#07070c;--panel:#14141d;--panel2:#1d1d2a;--line:#2a2a3a;
 --text:#fff;--muted:#a9a9bd;--red:#e50914;--red2:#ff2d3f;--radius:16px}
@@ -353,7 +353,7 @@ border-radius:12px;padding:12px 14px;margin-top:14px;color:#c9c9dd;font-size:14p
 .searchCard small{display:block;color:var(--muted);margin-top:4px}
 @media (max-width:640px){.formGrid{grid-template-columns:1fr}}
 </style></head><body>
-<header><div class="logo">CASTFLIX<small>HOME CINEMA</small></div>
+<header><div class="logo">MY HOME CINEMA</div>
 <input id="q" type="search" placeholder="🔍 Search movies and series...">
 <div class="tabs"><button type="button" data-tab="all" class="active">All</button>
 <button type="button" data-tab="movies">Movies</button><button type="button" data-tab="series">Series</button></div>
@@ -436,7 +436,7 @@ On a TV remote: arrows move, OK opens, Back closes, and while playing Left/Right
 <div class="chipRow" id="onlineRecent"><span class="note">Nothing played online yet on this browser.</span></div>
 <h3>If the phone server goes offline</h3>
 <div class="checkRow"><label><input type="checkbox" id="offlineRedirectToggle"> Auto-redirect to CineLite when this server goes offline (10 second countdown, you can cancel)</label></div>
-<p class="note">This works only if this CastFlix page was already open when the server went down — CastFlix checks the server every 10 seconds in the background. If you open the IP:port address <i>after</i> the server is already down, the browser cannot load this page at all, so it cannot redirect. For that case, bookmark https://cinelite.xyz/ directly on the TV, or use the standalone hosted Online page.</p>
+<p class="note">This works only if this My Home Cinema page was already open when the server went down — My Home Cinema checks the server every 10 seconds in the background. If you open the IP:port address <i>after</i> the server is already down, the browser cannot load this page at all, so it cannot redirect. For that case, bookmark https://cinelite.xyz/ directly on the TV, or use the standalone hosted Online page.</p>
 <div class="heroBtns"><button type="button" class="btnInfo onlineBtn" id="goCineliteBtn">Open cinelite.xyz now</button></div>
 <p class="note">Tip: find a TMDB ID on themoviedb.org — open a movie or show there and copy the number from its URL. For anime, use the AniList ID, not the TMDB ID.</p>
 </div></section>
@@ -452,7 +452,7 @@ On a TV remote: arrows move, OK opens, Back closes, and while playing Left/Right
 <button type="button" id="btnPlayerBack">✕ Back</button></div></div>
 <div id="seriesModal"><div class="modalTop"><b id="sTitle"></b>
 <button type="button" class="close" id="closeSeriesBtn">✕ Back</button></div><div class="epList" id="epList"></div></div>
-<div id="offlineOverlay"><div class="offlineBox"><div class="logo" style="margin-bottom:12px">CASTFLIX</div>
+<div id="offlineOverlay"><div class="offlineBox"><div class="logo" style="margin-bottom:12px">MY HOME CINEMA</div>
 <h2 style="margin-top:0">Server offline</h2>
 <p class="note" style="color:#ddd;font-size:16px">Your phone server is not reachable. Your local files need the phone, but you can continue online instead.</p>
 <p class="note" id="offlineCountdown"></p>
@@ -460,7 +460,7 @@ On a TV remote: arrows move, OK opens, Back closes, and while playing Left/Right
 <button type="button" class="btnInfo" id="offlineRetryBtn">Try Again</button>
 <button type="button" class="btnInfo" id="offlineStayBtn">Stay Here</button></div>
 </div></div>
-<div id="lock"><div class="lockBox"><div class="logo" style="margin-bottom:14px">CASTFLIX</div><h2 style="margin-top:0">Enter PIN</h2>
+<div id="lock"><div class="lockBox"><div class="logo" style="margin-bottom:14px">MY HOME CINEMA</div><h2 style="margin-top:0">Enter PIN</h2>
 <input id="pin" type="password" inputmode="numeric" placeholder="PIN">
 <div><button type="button" id="unlockBtn">Unlock</button></div><p class="note" id="pinErr"></p></div></div>
 <script>
@@ -890,7 +890,7 @@ setInterval(checkServer,10000);
 
 
 class Handler(BaseHTTPRequestHandler):
-    server_version = "CastFlix/0.7"
+    server_version = "MyHomeCinema/0.7"
 
     # Filled in by main()
     library = {}
@@ -1046,7 +1046,7 @@ def main():
     Handler.pin = args.pin
 
     ip = lan_ip()
-    print("CastFlix prototype", flush=True)
+    print("My Home Cinema prototype", flush=True)
     print(f"Found: {len(library['movies'])} movies, {len(library['series'])} series in {root}", flush=True)
     print(f"On this device: http://127.0.0.1:{args.port}", flush=True)
     print(f"On your TV browser (same Wi-Fi): http://{ip}:{args.port}", flush=True)
