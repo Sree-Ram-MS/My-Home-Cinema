@@ -1,0 +1,35 @@
+# Copy this file to .github/workflows/android.yml in the GitHub web UI
+# (the Muse GitHub App cannot create workflow files directly).
+name: Build Android APK
+
+on:
+  push:
+    branches: [android]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+      - name: Install SDK packages
+        run: |
+          yes | sdkmanager "platforms;android-34" "build-tools;34.0.0" "platform-tools"
+      - name: Build debug APK with Gradle
+        uses: gradle/gradle-build-action@v3
+        with:
+          gradle-version: '8.5'
+          arguments: assembleDebug
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: CastFlix-debug-apk
+          path: app/build/outputs/apk/debug/app-debug.apk
