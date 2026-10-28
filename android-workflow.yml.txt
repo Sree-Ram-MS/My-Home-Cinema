@@ -1,14 +1,18 @@
 # Copy this file to .github/workflows/android.yml in the GitHub web UI
 # (the Muse GitHub App cannot create workflow files directly).
-# v2: the old "Set up Android SDK" step (android-actions/setup-android@v3)
-# failed in 4 seconds on run 40668102114, before Gradle ever ran.
-# ubuntu-latest runners already ship an Android SDK, so this version
-# drops that step and uses the preinstalled SDK + sdkmanager directly.
+# v3: v2 build (no setup-android step, runner SDK + sdkmanager) PLUS
+# automatic Releases. Every push to android still uploads the APK as
+# an Actions artifact. When you push a tag like v1.0, the same build
+# also creates a GitHub Release for that tag and attaches the APK.
 name: Build Android APK
+
+permissions:
+  contents: write
 
 on:
   push:
     branches: [android]
+    tags: ['v*']
   workflow_dispatch:
 
 jobs:
@@ -53,8 +57,22 @@ jobs:
         with:
           gradle-version: '8.5'
           arguments: assembleDebug --stacktrace
-      - name: Upload APK
+      - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
           name: CastFlix-debug-apk
           path: app/build/outputs/apk/debug/app-debug.apk
+      - name: Prepare release APK name
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: cp app/build/outputs/apk/debug/app-debug.apk "CastFlix-${{ github.ref_name }}.apk"
+      - name: Create Release and attach APK
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: CastFlix Android ${{ github.ref_name }}
+          body: |
+            CastFlix Android app — start sharing on your phone, open the shown IP:port on your TV browser.
+            Install the APK below on your Android phone, allow video/notification permissions, tap Start Sharing.
+          files: CastFlix-${{ github.ref_name }}.apk
+          generate_release_notes: true
