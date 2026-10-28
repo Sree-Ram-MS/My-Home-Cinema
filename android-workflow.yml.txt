@@ -1,5 +1,9 @@
 # Copy this file to .github/workflows/android.yml in the GitHub web UI
 # (the Muse GitHub App cannot create workflow files directly).
+# v2: the old "Set up Android SDK" step (android-actions/setup-android@v3)
+# failed in 4 seconds on run 40668102114, before Gradle ever ran.
+# ubuntu-latest runners already ship an Android SDK, so this version
+# drops that step and uses the preinstalled SDK + sdkmanager directly.
 name: Build Android APK
 
 on:
@@ -18,16 +22,37 @@ jobs:
         with:
           distribution: temurin
           java-version: '17'
-      - name: Set up Android SDK
-        uses: android-actions/setup-android@v3
+      - name: Show preinstalled Android SDK
+        run: |
+          echo "ANDROID_HOME=$ANDROID_HOME"
+          ls "$ANDROID_HOME" || true
+          ls "$ANDROID_HOME/cmdline-tools" || true
       - name: Install SDK packages
         run: |
-          yes | sdkmanager "platforms;android-34" "build-tools;34.0.0" "platform-tools"
+          set -e
+          SDKMANAGER=""
+          if [ -x "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" ]; then
+            SDKMANAGER="$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
+          elif [ -x "$ANDROID_HOME/cmdline-tools/bin/sdkmanager" ]; then
+            SDKMANAGER="$ANDROID_HOME/cmdline-tools/bin/sdkmanager"
+          else
+            echo "Downloading Android cmdline-tools..."
+            mkdir -p "$ANDROID_HOME/cmdline-tools"
+            cd /tmp
+            curl -L -o cmdtools.zip https://dl.google.com/android/repository/commandlinetools-linux-11076708_latest.zip
+            unzip -q -o cmdtools.zip -d "$ANDROID_HOME/cmdline-tools/tmp"
+            mkdir -p "$ANDROID_HOME/cmdline-tools/latest"
+            mv "$ANDROID_HOME/cmdline-tools/tmp/cmdline-tools/"* "$ANDROID_HOME/cmdline-tools/latest/"
+            SDKMANAGER="$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
+          fi
+          echo "sdkmanager: $SDKMANAGER"
+          yes | "$SDKMANAGER" --licenses || true
+          yes | "$SDKMANAGER" "platforms;android-34" "build-tools;34.0.0" "platform-tools"
       - name: Build debug APK with Gradle
         uses: gradle/gradle-build-action@v3
         with:
           gradle-version: '8.5'
-          arguments: assembleDebug
+          arguments: assembleDebug --stacktrace
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
